@@ -1,14 +1,14 @@
 package ScalableComputing;
+import java.io.BufferedReader;
 import java.io.DataInputStream;
-import java.io.FileInputStream;
+
+import ScalableComputing.Data;
 import java.io.PrintStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.Socket;
-import java.util.Properties;
-
-import ScalableComputing.Info;
-
-import java.net.InetAddress;
+import java.nio.CharBuffer;
+import java.util.Arrays;
 import java.net.ServerSocket;
 
 // Multiple Clients : Multiple Chat room 
@@ -37,8 +37,8 @@ public class ChatServer {
 		//Open a Server Socket
 		
 		try {
-			InetAddress addr = InetAddress.getByName(IPAddress);
-			Server_Sock = new ServerSocket(PortNo,50,addr);
+			
+			Server_Sock = new ServerSocket(PortNo);
 			
 		} catch (IOException e) {
 			System.out.println(e);
@@ -73,78 +73,94 @@ public class ChatServer {
 
 class clientThread extends Thread {
 
-	private String Client_Name = null;
-	private DataInputStream input = null;
-	private PrintStream output = null;
+	BufferedReader input;
+	PrintStream output;
 	private Socket Client_Soc = null;
-	private final clientThread[] ClientThread;
-	private int Max_Clients;
 
 
 	public clientThread(Socket Client_Soc, clientThread[] ClientThread) {
 		this.Client_Soc = Client_Soc;
-		this.ClientThread = ClientThread;
-		Max_Clients = ClientThread.length;
 
 	}
 
 	public void run() {
-		int Max_Clients = this.Max_Clients;
-		clientThread[] ClientThread = this.ClientThread;
-		Support_Functions sf = new Support_Functions();
-		Info pckt = new Info();
-		String message_out =null;
+		String[] l = new String[100];
 		try {
 		
-			input = new DataInputStream(Client_Soc.getInputStream());
+			input = new BufferedReader(new InputStreamReader(Client_Soc.getInputStream()));
 			output = new PrintStream(Client_Soc.getOutputStream());
-		
-			String l1= input.readLine();
-			String l2= input.readLine();
-			String l3= input.readLine();
-			String l4= input.readLine();
-			if(l1.startsWith("JOIN_CHATROOM: ")) 
-			{
-				pckt = sf.processJoinMessage(l1,l2,l3,l4,output);
-				message_out = sf.makeReplyMessage(pckt);   // Sends Reply if pre-processing input is successful
-				output.print(message_out);
-				System.out.println("\nAfter decoding: "+message_out);
-			}
-			else if(l1.startsWith("LEFT_CHATROOM: ")) 
-			{
+			while(true) {
+			System.out.println("Input waiting..");
+			l[0]=input.readLine();
+			if(l[0].startsWith("JOIN_CHATROOM: ")) {
+				l[1]= input.readLine();
+				l[2]= input.readLine();
+				l[3]= input.readLine();
+				System.out.println("Input JOIN_CHATROOM Message:\n"+l[0]+l[1]+l[2]+l[3]);
+			}else if(l[0].startsWith("LEAVE_CHATROOM: ")) {
+				l[1] = input.readLine();
+				l[2] = input.readLine();
+				System.out.println("Input LEAVE_CHATROOM Message:\n"+l[0]+l[1]+l[2]);
+			}else if(l[0].startsWith("CHAT: ")) {
+				l[1] = input.readLine();
+				l[2] = input.readLine();
 
-			}
-			else if(l1.startsWith("CHAT: ")) 
-			{
-				
-				pckt = sf.processChatMessage(l1,l2,l3,l4,output);
-				output.print(message_out);
-				System.out.println("\nAfter decoding: "+message_out);
-			}
-
-
-			/*Accepting new client, if any */
-			
-			synchronized (this) 
-			{
-				for (int i = 0; i < Max_Clients; i++) 
-				{
-					if (ClientThread[i] == this) 
-					{
-						ClientThread[i] = null;
+				int i = 3;
+				while(true){
+					l[i] = input.readLine();
+					if(l[i].isEmpty()){
+						break;
 					}
+					i++;
 				}
+				System.out.println("Input CHAT Message:\n"+l[0]+l[1]+l[2]+l[3]+l[4]);
+			}else if(l[0].startsWith("KILL_SERVICE")) {
+				System.out.println("Input KILL_SERVICE Message:\n"+l[0]);
+				input.close();
+				output.close();
+				Client_Soc.close();
+				System.exit(0);
+			}else if(l[0].startsWith("HELO ")) {
+				System.out.println("Input HELO Message:\n"+l[0]);
+			}else if(l[0].startsWith("DISCONNECT: ")){
+				l[1] = input.readLine();
+				l[2] = input.readLine();
+				Support_Functions sf = new Support_Functions();
+/*				sf .goDisconnectMessage(l[0],l[1],l[2],output);
+				output.close();
+				input.close();
+				Client_Soc.close();
+				return;
+			}else {
+				System.out.println("Input ERROR Message:\n"+l[0]);
+				//PrintStream output = new PrintStream(Client_Soc.getOutputStream());
+				Support_Functions sf = new Support_Functions();
+				sf .goErrorMessage(l[0],output);
+
 			}
+			new ClientWriterThread(output,l).start();*/
+			}
+		}
+
+	} catch (IOException e) {
+		System.out.println("IO Exception of Main Thread::"+e +"::");
+		e.printStackTrace();
+	}finally{
+		try {
 			
 			input.close();
 			output.close();
 			Client_Soc.close();
-			
-			// Exit the socket and the IP OP Streams
-			
 		} catch (IOException e) {
+			System.out.println("IO Exception of Main Thread Finally block::"+e +"::");
+			e.printStackTrace();
+		}catch(NullPointerException nullpexc){
+			System.out.println("NullPointerException of Main Thread Finally block::"+nullpexc +"::");
+			nullpexc.printStackTrace();
 		}
-	}
+		
 
+	}
+}
 
 }
