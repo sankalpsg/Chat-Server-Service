@@ -1,4 +1,4 @@
-package ScalableComputing;
+ package ScalableComputing;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 
@@ -25,7 +25,7 @@ public class ChatServer {
 
 		Support_Functions.loadProperties();
 		Data.chatRoomsIndex = 0;
-		String IPAddress = "127.0.0.1";  //IP Address
+		String IPAddress = "134.226.50.51";  //IP Address
 		int PortNo = 8050;    // Port Number
 		if (args.length < 1) {
 			System.out.println("Usage: java MultiThreadChatServerSync <PortNo>\n"

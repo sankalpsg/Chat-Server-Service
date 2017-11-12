@@ -22,7 +22,10 @@ public class Support_Functions {
 	}
 	public Boolean processJoinMessage(String l1,String l2,String l3,String l4, PrintStream output) {
 		Info message = new Info();
-		if(l1.startsWith("JOIN_CHATROOM") && l2.startsWith("CLIENT_IP") && l3.startsWith("PORT") && l4.startsWith("CLIENT_NAME")) {
+		if(l1.startsWith("JOIN_CHATROOM") && 
+				l2.startsWith("CLIENT_IP") && 
+				l3.startsWith("PORT") && 
+				l4.startsWith("CLIENT_NAME")) {
 
 			String[] msg_part = l1.split(": ");
 			String l1Val = msg_part[1];
@@ -52,7 +55,7 @@ public class Support_Functions {
 			}
 			roomRefIDSet.add(Data.chatRooms.get(l1Val));
 
-			Data.writers.put(Integer.parseInt(String.valueOf(Thread.currentThread().getId())),output);
+			Data.stream.put(Integer.parseInt(String.valueOf(Thread.currentThread().getId())),output);
 			Data.clients.put(Integer.parseInt(String.valueOf(Thread.currentThread().getId())), roomRefIDSet);
 			
 			Set<Integer> ClientID_List = new HashSet<Integer>();
@@ -69,7 +72,7 @@ public class Support_Functions {
 					"\nCLIENT_NAME: "+l4Val+
 					"\nMESSAGE: "+ l4Val;
 		
-			for (Entry<Integer, PrintStream> entry : Data.writers.entrySet()) {
+			for (Entry<Integer, PrintStream> entry : Data.stream.entrySet()) {
 				System.out.println(entry.getKey().toString());
 				if(Data.clients.get(entry.getKey()).contains(Data.chatRooms.get(l1Val))) {
 					output2 = entry.getValue();
@@ -77,6 +80,7 @@ public class Support_Functions {
 						output2.println(StrMsg);
 						System.out.println("Output  "+output2+"  JOIN_CHATROOM\n" +  StrMsg);
 					}
+				}
 
 			}
 			output.println(StrMsg);
@@ -84,7 +88,7 @@ public class Support_Functions {
 		}
 		else {
 			message.setErrorCode("1");
-			message.setErrorDescription("Input Message not valid");
+			message.setErrorDescription("Input Message Invalid");
 			return false;
 		}
 	}
@@ -104,17 +108,11 @@ public class Support_Functions {
 
 	}
 	public static void loadProperties() {
-		Properties props = new Properties();
-
-		try {
-			props.load(new FileInputStream("conf/keywords.properties"));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		PropertiesServr.IPserver = props.getProperty("IPserver");
-		PropertiesServr.Port_Server = props.getProperty("Port_Server");
+	
+		PropertiesServr.IPserver = "134.226.50.51";
+		PropertiesServr.Port_Server = "8050";
 	}
-	public Info processChatMessage(String l1, String l2, String l3, String l4, PrintStream output) {
+	public Boolean processChatMessage(String l1, String l2, String l3, String l4, PrintStream output) {
 		Info message = new Info();
 		if(l1.startsWith("CHAT") && l2.startsWith("JOIN_ID") && l3.startsWith("CLIENT_NAME") && l4.startsWith("MESSAGE")) {
 			String[] msg_part = l1.split(": ");
@@ -127,34 +125,38 @@ public class Support_Functions {
 			String l4Val = msg_part[1];
 
 			//Validate existing chat room 
-			if(!Data.chatRooms.containsValue(l1Val)) { // New chat room
+			if(!Data.chatRoomsInverse.containsValue(l1Val)) { // New chat room
 				message.setErrorCode("1");
 				message.setErrorDescription("Input Message not valid");
-				return message;
+				return false;
 			}
 			PrintStream op2;
 			String str_message=null;
 			str_message = "CHAT: "+l1Val +"\n"
 					+"CLIENT_NAME: "+l3Val +"\n"
 					+"MESSAGE: "+ l4Val +"\n\n";
-			
-			for (Entry<Integer, PrintStream> entry : Data.writers.entrySet()) 
-			{
-		        
-		        if(String.valueOf(Data.clients.get(entry.getKey()))==l1Val) 
-		        {	
-		        	op2 = entry.getValue();
+			output.print(str_message);
+			for (Entry<Integer, PrintStream> entry : Data.stream.entrySet()){
+				if(String.valueOf(Data.clients.get(entry.getKey()))==l1Val) 
+		        {	op2 = entry.getValue();
 		        	if(op2!=output)     	// Avoid Duplicate message to the client who is sending it
 		        		op2.println(str_message);
 		        }
 		    }
 
-			return message;
+			return true;
 		}
 		else {
 			message.setErrorCode("1");
 			message.setErrorDescription("INVALID I/P MESSAGE");
-			return message;
+			return false;
 		}
 	}
+	
+	public void processHeloMessage(String helo,PrintStream output){
+		String str_message = null;
+		str_message = helo + "\nIP: 134.226.50.51\nPort: 8050\nStudentID: 17302431";
+		output.print(str_message);
+	}
+
 }
