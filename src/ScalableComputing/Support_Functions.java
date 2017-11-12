@@ -158,5 +158,13 @@ public class Support_Functions {
 		str_message = helo + "\nIP: 134.226.50.51\nPort: 8050\nStudentID: 17302431";
 		output.print(str_message);
 	}
+	
+	public void goErrorMessage(String string, PrintStream output) {
+
+		String str = "ERROR_CODE: 1\nERROR_DESCRIPTION: Invalid Input\n";
+		output.print(str);
+		System.out.println("Output ERROR:\n " +  str);
+	}
+	
 
 }

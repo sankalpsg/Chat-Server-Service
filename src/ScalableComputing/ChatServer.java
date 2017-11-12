@@ -114,38 +114,22 @@ class clientThread extends Thread {
 					i++;
 				}
 				System.out.println("Input CHAT Message:\n"+l[0]+l[1]+l[2]+l[3]+l[4]);
-			}else if(l[0].startsWith("KILL_SERVICE")) {
-				System.out.println("Input KILL_SERVICE Message:\n"+l[0]);
-				input.close();
-				output.close();
-				Client_Soc.close();
-				System.exit(0);
-			}else if(l[0].startsWith("HELO ")) {
-				System.out.println("Input HELO Message:\n"+l[0]);
-			}else if(l[0].startsWith("DISCONNECT: ")){
-				l[1] = input.readLine();
-				l[2] = input.readLine();
-				Support_Functions sf = new Support_Functions();
-/*				sf .goDisconnectMessage(l[0],l[1],l[2],output);
-				output.close();
-				input.close();
-				Client_Soc.close();
-				return;
-			}else {
+			}
+			else {
 				System.out.println("Input ERROR Message:\n"+l[0]);
-				//PrintStream output = new PrintStream(Client_Soc.getOutputStream());
 				Support_Functions sf = new Support_Functions();
 				sf .goErrorMessage(l[0],output);
 
 			}
-			new ClientWriterThread(output,l).start();*/
+			new ClientStreamThread(output,l).start();
 			}
 		}
 
-	} catch (IOException e) {
+	 catch (IOException e) {
 		System.out.println("IO Exception of Main Thread::"+e +"::");
 		e.printStackTrace();
-	}finally{
+	 }
+		finally{
 		try {
 			
 			input.close();
@@ -161,6 +145,6 @@ class clientThread extends Thread {
 		
 
 	}
-}
+ }
 
 }
