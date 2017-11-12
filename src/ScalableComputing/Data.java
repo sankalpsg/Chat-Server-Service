@@ -6,8 +6,8 @@ import java.util.Set;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class Data {
-
+public class Data 
+{
 	static  HashMap<String,Integer> chatRooms=new HashMap<String,Integer>();  //Stores  ChatRoom ID and Name 
 	static  HashMap<Integer,String> chatRoomsInverse=new HashMap<Integer,String>();  //Inverse of the above HashMap
 	static int chatRoomsIndex=0;											  //Count of Chat Rooms
