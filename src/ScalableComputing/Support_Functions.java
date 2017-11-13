@@ -165,9 +165,11 @@ public class Support_Functions
 			for (Entry<Integer, PrintStream> newip : Data.stream.entrySet())
 			{
 				if(Data.clients.get(newip.getKey()).contains(Integer.parseInt(l1Val)))
-		        	{	op2 = newip.getValue();
+		        	{op2 = newip.getValue();
 		        		if(op2!=output)     	// Avoid Duplicate message to the client who is sending it
-		        		op2.println(str_message);
+		        		op2.print(str_message);
+		        		
+		        	System.out.println("Output CHAT: \n" +  str_message);
 		        	}
 		    }
 
