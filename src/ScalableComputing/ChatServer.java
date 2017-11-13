@@ -27,7 +27,7 @@ public class ChatServer
 
 		Support_Functions.loadProperties();
 		Data.chatRoomsIndex = 0;
-		String IPAddress = "134.226.50.51";  //IP Address
+		String IPAddress = "134.226.50.182";  //IP Address
 		int PortNo = 8050;    // Port Number
 		if (args.length < 1) 
 		{
@@ -108,20 +108,21 @@ class clientThread extends Thread
 			{
 				System.out.println("Input waiting..");
 				l[0]=input.readLine();
-				if(l[0].startsWith("JOIN_CHATROOM: ")) 
+				System.out.println(" 1st line: "+l[0]+"\n");
+				if(null!= l[0] && l[0].startsWith("JOIN_CHATROOM: ")) 
 				{
 					l[1]= input.readLine();
 					l[2]= input.readLine();
 					l[3]= input.readLine();
 					System.out.println("Input JOIN_CHATROOM Message:\n"+l[0]+l[1]+l[2]+l[3]);
 				}
-				else if(l[0].startsWith("LEAVE_CHATROOM: ")) 
+				else if(null!= l[0] &&l[0].startsWith("LEAVE_CHATROOM: ")) 
 				{
 					l[1] = input.readLine();
 					l[2] = input.readLine();
 					System.out.println("Input LEAVE_CHATROOM Message:\n"+l[0]+l[1]+l[2]);
 				}
-				else if(l[0].startsWith("CHAT: ")) 
+				else if(null!= l[0] &&l[0].startsWith("CHAT: ")) 
 				{
 					l[1] = input.readLine();
 					l[2] = input.readLine();
@@ -137,6 +138,9 @@ class clientThread extends Thread
 					}
 					System.out.println("Input CHAT Message:\n"+l[0]+l[1]+l[2]+l[3]+l[4]);
 				}
+				else if(null == l[0])
+				{
+				}
 				else 
 				{
 					System.out.println("Input ERROR Message:\n"+l[0]);
@@ -146,6 +150,8 @@ class clientThread extends Thread
 				new ClientStreamThread(output,l).start();
 			}
 		}
+		
+		
 
 		catch (IOException e) 
 		{

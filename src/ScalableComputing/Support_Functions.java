@@ -131,7 +131,7 @@ public class Support_Functions
 	
 	public static void loadProperties() 
 	{
-		PropertiesServr.IPserver = "134.226.50.51";
+		PropertiesServr.IPserver = "134.226.50.182";
 		PropertiesServr.Port_Server = "8050";
 	}
 	
@@ -149,10 +149,10 @@ public class Support_Functions
 			String l4Val = msg_part[1];
 
 			//Validate existing chat room 
-			if(!Data.chatRoomsInverse.containsValue(l1Val)) 
+			if(!Data.chatRoomsInverse.containsKey(Integer.parseInt(l1Val))) 
 			{ // New chat room
 				message.setErrorCode("1");
-				message.setErrorDescription("Input Message not valid");
+				message.setErrorDescription("Invalid input Message");
 				return false;
 			}
 			
@@ -164,7 +164,7 @@ public class Support_Functions
 			output.print(str_message);
 			for (Entry<Integer, PrintStream> newip : Data.stream.entrySet())
 			{
-				if(String.valueOf(Data.clients.get(newip.getKey()))==l1Val) 
+				if(Data.clients.get(newip.getKey()).contains(Integer.parseInt(l1Val)))
 		        	{	op2 = newip.getValue();
 		        		if(op2!=output)     	// Avoid Duplicate message to the client who is sending it
 		        		op2.println(str_message);
@@ -273,7 +273,7 @@ public class Support_Functions
 	public void processHeloMessage(String helo,PrintStream output)
 	{
 		String str_message = null;
-		str_message = helo + "\nIP: 134.226.50.51\nPort: 8050\nStudentID: 17302431";
+		str_message = helo + "\nIP: 134.226.50.182\nPort: 8050\nStudentID: 17302431";
 		output.print(str_message);
 	}
 	
