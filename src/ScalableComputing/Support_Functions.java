@@ -131,7 +131,7 @@ public class Support_Functions
 	
 	public static void loadProperties() 
 	{
-		PropertiesServr.IPserver = "134.226.50.182";
+		PropertiesServr.IPserver = "134.226.50.13";
 		PropertiesServr.Port_Server = "8050";
 	}
 	
@@ -275,8 +275,60 @@ public class Support_Functions
 	public void processHeloMessage(String helo,PrintStream output)
 	{
 		String str_message = null;
-		str_message = helo + "\nIP: 134.226.50.182\nPort: 8050\nStudentID: 17302431";
+		str_message = helo + "\nIP: 134.226.50.13\nPort: 8050\nStudentID: 17302431";
 		output.print(str_message);
+	}
+	
+	public void processDisconnectMessage(String l1,String l2, String l3, PrintStream output) 
+	{
+		if(l1.startsWith("DISCONNECT") 
+				&& l2.startsWith("PORT") 
+				&& l3.startsWith("CLIENT_NAME")) 
+		{
+			String[] parts = l1.split(": ");
+			String l1Val = parts[1];
+			parts = l2.split(": ");
+			String l2Val = parts[1];
+			parts = l3.split(": ");
+			String l3Val = parts[1];
+
+			Set<Integer> ClientID_List = Data.clientNames.get(l3Val);
+			Set<Integer> roomRefIDSet = new HashSet<Integer>();
+			for(Integer ClientID : ClientID_List)
+			{
+				if(null!= Data.clients.get(ClientID))
+				{
+					roomRefIDSet.addAll(Data.clients.get(ClientID));
+					System.out.println("While processing Disconnect : NULL ");
+				}
+			}
+			Integer k=-1;
+			for (Entry<Integer, PrintStream> entry : Data.stream.entrySet()) 
+			{
+				for(Integer entry2 : roomRefIDSet)
+				{
+					if(Data.clients.get(entry.getKey()).contains(entry2)) 
+					{	
+						PrintStream op2 = entry.getValue();
+						String str_message2 = "CHAT: "+entry2.toString()+"\n"
+								+"CLIENT_NAME: "+l3Val +"\n"
+								+"MESSAGE: "+ l3Val;
+						op2.println(str_message2);
+						System.out.println("Output "+op2+" DISCONNECT: \n" +  str_message2+"\nClient ID: "+ entry.getKey() );
+						if(op2==output) 
+						{
+							System.out.println("Duplicate");
+							k = entry.getKey();
+						}
+					}
+				}
+			}
+			if(k!=-1)
+			{
+				Data.stream.remove(k);
+				Data.clients.remove(k);
+			}
+		}
 	}
 	
 }

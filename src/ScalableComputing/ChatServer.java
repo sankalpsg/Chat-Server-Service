@@ -9,6 +9,9 @@ import java.io.InputStreamReader;
 import java.net.Socket;
 import java.nio.CharBuffer;
 import java.util.Arrays;
+
+import ScalableComputing.Support_Functions;
+
 import java.net.ServerSocket;
 
 // Multiple Clients : Multiple Chat room 
@@ -27,7 +30,7 @@ public class ChatServer
 
 		Support_Functions.loadProperties();
 		Data.chatRoomsIndex = 0;
-		String IPAddress = "134.226.50.182";  //IP Address
+		String IPAddress = "134.226.50.13";  //IP Address
 		int PortNo = 8050;    // Port Number
 		if (args.length < 1) 
 		{
@@ -114,13 +117,13 @@ class clientThread extends Thread
 					l[1]= input.readLine();
 					l[2]= input.readLine();
 					l[3]= input.readLine();
-					System.out.println("Input JOIN_CHATROOM Message:\n"+l[0]+l[1]+l[2]+l[3]);
+					System.out.println("Enter JOIN_CHATROOM Message:\n"+l[0]+l[1]+l[2]+l[3]);
 				}
 				else if(null!= l[0] &&l[0].startsWith("LEAVE_CHATROOM: ")) 
 				{
 					l[1] = input.readLine();
 					l[2] = input.readLine();
-					System.out.println("Input LEAVE_CHATROOM Message:\n"+l[0]+l[1]+l[2]);
+					System.out.println("Enter LEAVE_CHATROOM Message:\n"+l[0]+l[1]+l[2]);
 				}
 				else if(null!= l[0] &&l[0].startsWith("CHAT: ")) 
 				{
@@ -136,14 +139,28 @@ class clientThread extends Thread
 						}
 						i++;
 					}
-					System.out.println("Input CHAT Message:\n"+l[0]+l[1]+l[2]+l[3]+l[4]);
+					System.out.println("Enter CHAT Message:\n"+l[0]+l[1]+l[2]+l[3]+l[4]);
+				}
+				else if(null != l[0] && l[0].startsWith("KILL_SERVICE")) {
+					System.out.println("Enter KILL_SERVICE Message:\n"+l[0]);
+					Client_Soc.close();
+					System.exit(0);
+				}else if(null != l[0] && l[0].startsWith("HELO ")) {
+					System.out.println("Enter HELO Message:\n"+l[0]);
+				}else if(null != l[0] && l[0].startsWith("DISCONNECT: ")){
+					l[1] = input.readLine();
+					l[2] = input.readLine();
+					Support_Functions sf = new Support_Functions();
+					sf .processDisconnectMessage(l[0],l[1],l[2],output);
+					Client_Soc.close();
+					return;
 				}
 				else if(null == l[0])
 				{
 				}
 				else 
 				{
-					System.out.println("Input ERROR Message:\n"+l[0]);
+					System.out.println("Enter ERROR Message:\n"+l[0]);
 					Support_Functions sf = new Support_Functions();
 					sf .goErrorMessage(l[0],output);
 				}

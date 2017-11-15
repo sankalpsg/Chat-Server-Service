@@ -42,10 +42,12 @@ public class ClientStreamThread extends Thread
 		}
 		else if(l[0].startsWith("LEAVE_CHATROOM: ")) 
 		{
-			System.out.println("****Start "+Thread.currentThread().getId()+"  WriterThread: In leave chatroom if block****");
+			System.out.println(".......Start "+Thread.currentThread().getId()+"  WriterThread: In leave chatroom if block......");
 			sf.processLeaveMessage(l[0],l[1],l[2],output);
 			return;
 		}
 	}
 }
+
+
 
