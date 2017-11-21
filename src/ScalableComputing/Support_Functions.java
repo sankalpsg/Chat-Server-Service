@@ -1,12 +1,10 @@
 package ScalableComputing;
 
-import java.io.FileInputStream;
-import java.io.IOException;
+
 import java.io.PrintStream;
-import java.awt.List;
-import java.io.PrintWriter;
-import java.net.SocketException;
 import java.util.Map.Entry;
+
+import ScalableComputing.PropertiesServr;
 
 import ScalableComputing.Data;
 
@@ -15,7 +13,6 @@ import java.util.HashSet;
 
 import ScalableComputing.Info;
 
-import java.util.Properties;
 
 public class Support_Functions 
 {
@@ -129,10 +126,10 @@ public class Support_Functions
 	}
 	
 	
-	public static void loadProperties() 
+	public static void loadProperties(String IP,int PortNo) 
 	{
-		PropertiesServr.IPserver = "134.226.50.13";
-		PropertiesServr.Port_Server = "8050";
+		PropertiesServr.IPserver = IP;
+		PropertiesServr.Port_Server = String.valueOf(PortNo);
 	}
 	
 	public Boolean processChatMessage(String l1, String l2, String l3, String l4, PrintStream output) {
@@ -142,7 +139,6 @@ public class Support_Functions
 			String[] msg_part = l1.split(": ");
 			String l1Val = msg_part[1];
 			msg_part = l2.split(": ");
-			String l2Val = msg_part[1];
 			msg_part = l3.split(": ");
 			String l3Val = msg_part[1];
 			msg_part = l4.split(": ");
@@ -275,7 +271,7 @@ public class Support_Functions
 	public void processHeloMessage(String helo,PrintStream output)
 	{
 		String str_message = null;
-		str_message = helo + "\nIP: 134.226.50.13\nPort: 8050\nStudentID: 17302431";
+		str_message =  helo + "\nIP: "+PropertiesServr.IPserver +"\nPort: "+PropertiesServr.Port_Server+"\nStudentID: 17302431"; // PropertiesServr.IPserver + PropertiesServr.Port_Server
 		output.print(str_message);
 	}
 	
@@ -286,9 +282,7 @@ public class Support_Functions
 				&& l3.startsWith("CLIENT_NAME")) 
 		{
 			String[] parts = l1.split(": ");
-			String l1Val = parts[1];
 			parts = l2.split(": ");
-			String l2Val = parts[1];
 			parts = l3.split(": ");
 			String l3Val = parts[1];
 

@@ -1,14 +1,11 @@
- package ScalableComputing;
+package ScalableComputing;
 import java.io.BufferedReader;
-import java.io.DataInputStream;
-
 import ScalableComputing.Data;
 import java.io.PrintStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
-import java.nio.CharBuffer;
-import java.util.Arrays;
+
 
 import ScalableComputing.Support_Functions;
 
@@ -28,19 +25,21 @@ public class ChatServer
 	public static void main(String args[]) 
 	{
 
-		Support_Functions.loadProperties();
+		
 		Data.chatRoomsIndex = 0;
-		String IPAddress = "134.226.50.13";  //IP Address
+		String IPAddress = "127.0.0.1";  //IP Address
 		int PortNo = 8050;    // Port Number
-		if (args.length < 1) 
+		if (args.length < 2) 
 		{
-			System.out.println("Using port number=" + PortNo +"\n IP= "+ IPAddress);
+			System.out.println("Issue in the .sh script but it will still execute with localhost and port 8050");
 		} 
 		else 
 		{
 			PortNo = Integer.valueOf(args[0]).intValue();
+			IPAddress=args[1];
 		}
-
+		
+		Support_Functions.loadProperties(IPAddress,PortNo);
 		//Open a Server Socket
 		
 		try 
