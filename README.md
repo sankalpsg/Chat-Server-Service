@@ -27,6 +27,11 @@ Navigate to Chat-Server-Service/src/conf/
 Run the below command: 
 	
 	sh start.sh
+	
+
+Dependency
+
+Java version:1.8 jdk
 
 
 
